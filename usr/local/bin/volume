@@ -1,0 +1,28 @@
+#!/bin/bash
+
+refresh_i3status="killall -SIGUSR1 py3status"
+headphone=$(cat /var/tmp/headphones.log)
+
+case "$1" in
+	vup)
+		#sudo -g audio pactl set-sink-volume @DEFAULT_SINK@ +10%;
+		amixer sset Master 5%+
+		$refresh_i3status
+
+	;;
+	vdown)
+		#sudo -g audio pactl set-sink-volume @DEFAULT_SINK@ -10%; 
+		amixer sset Master 5%-
+		$refresh_i3status
+	;;
+	mute)
+		#sudo -g audio pactl set-sink-mute @DEFAULT_SINK@ toggle; 
+		amixer sset Master toggle
+		if [[ $headphone == "in" ]]; then
+			amixer sset Headphone unmute
+		else
+			amixer sset Speaker unmute
+		fi
+		$refresh_i3status
+	;;
+	esac
